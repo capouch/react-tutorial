@@ -6,7 +6,7 @@
     },
     {
         "id": 1420070400000,
-        "author": "Paul O’Shannessy",
+        "author": "Paul OShannessy",
         "text": "React is *great*!"
     },
     {
@@ -23,10 +23,5 @@
         "id": 1448701951096,
         "author": "Brian Capouch",
         "text": "Big victory!!"
-    },
-    {
-        "id": 1448749455549,
-        "author": "Yogi Bear",
-        "text": "Yabba Dabba Do!!"
     }
 ]

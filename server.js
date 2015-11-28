@@ -64,6 +64,7 @@ app.post('/api/comments', function(req, res) {
     });
   });
 });
+
 io.sockets.on('connection', function (client) {
   // Respond to requests to send data
   client.on('send_data', function () {
@@ -87,10 +88,12 @@ io.sockets.on('connection', function (client) {
       // NOTE: In a real implementation, we would likely rely on a database or
       // some other approach (e.g. UUIDs) to ensure a globally unique id. We'll
       // treat Date.now() as unique-enough for our purposes.
+
+      // console.log(JSON.stringify(entry));
       var newComment = {
         id: Date.now(),
-        author: req.body.author,
-        text: req.body.text,
+        author: entry.author,
+        text: entry.text,
       };
       comments.push(newComment);
       fs.writeFile(COMMENTS_FILE, JSON.stringify(comments, null, 4), function(err) {
@@ -98,9 +101,28 @@ io.sockets.on('connection', function (client) {
           console.error(err);
           process.exit(1);
         }
-        client.emit('update', JSON.parse(comments));
+        // Hmmm.  The watcher will take care of this automatically!!
+        // client.emit('update', comments);
       });
     });
+  });
+  // Keep an eye for local changes to the data file
+  fs.watchFile(
+    'comments.json',
+    function ( current, previous ) {
+      // console.log( 'file accessed' );
+      // Send notice
+      if ( current.mtime !== previous.mtime ) {
+        console.log( 'file changed -- sending update');
+        fs.readFile(COMMENTS_FILE, function(err, data) {
+          if (err) {
+            console.error(err);
+            process.exit(1);
+          }
+        // console.log('Emitting' + data);
+        client.emit('update', JSON.parse(data));
+      });
+    }
   });
 });
 
