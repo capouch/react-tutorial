@@ -13,12 +13,15 @@
 var fs = require('fs');
 var path = require('path');
 var express = require('express');
+var http = require('http');
 var bodyParser = require('body-parser');
 var app = express();
+var server = http.createServer(app);
+var io = require('socket.io')(server);
 
 var COMMENTS_FILE = path.join(__dirname, 'comments.json');
 
-app.set('port', (process.env.PORT || 3000));
+// app.set('port', (process.env.PORT || 3000));
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
@@ -61,8 +64,23 @@ app.post('/api/comments', function(req, res) {
     });
   });
 });
-
-
-app.listen(app.get('port'), function() {
-  console.log('Server started: http://localhost:' + app.get('port') + '/');
+io.sockets.on('connection', function (client) {
+  // Respond to requests to send data
+  client.on('send_data', function () {
+    // console.log('Got message from client');
+    fs.readFile(COMMENTS_FILE, function(err, data) {
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+    // console.log(JSON.parse(data));
+    client.emit('update', JSON.parse(data));
+    });
+  });
 });
+
+server.listen(3000);
+console.log('Server running on port 3000');
+//(app.get('port'), function() {
+//  console.log('Server started: http://localhost:' + app.get('port') + '/');
+//});

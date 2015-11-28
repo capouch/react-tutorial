@@ -12,23 +12,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
   </head>
   <body>
+    <!-- Remember this is a pretend file -->
+    <script src="/socket.io/socket.io.js"></script>
     <div id="content"></div>
     <script type="text/babel">
-
     // tutorial code
+    // Begin conversion AJAX->socket.io 28 November 2015
+    var socket = io.connect(document.location.href);
     var CommentBox = React.createClass({
-      loadCommentsFromServer: function() {
-        $.ajax({
-          url: this.props.url,
-          dataType: 'json',
-          cache: false,
-          success: function(data) {
-            this.setState({data: data});
-          }.bind(this),
-          error: function(xhr, status, err) {
-            console.error(this.props.url, status, err.toString());
-          }.bind(this)
-        });
+      loadCommentsFromServer: function(data) {
+        // No more AJAX!!
+        this.setState({data: data});
       },
       handleCommentSubmit: function(comment) {
         var comments = this.state.data;
@@ -55,9 +49,21 @@
         return {data: []};
       },
       componentDidMount: function() {
-        this.loadCommentsFromServer();
-        setInterval(this.loadCommentsFromServer, this.props.pollInterval);
-      },
+        // Why do I have to do this to solve scoping error?
+        var displayComments = this.loadCommentsFromServer;
+
+        // Former code
+        // this.loadCommentsFromServer([{"id": 27, "author": "Joe Blow", "text": "Hi mom!"}]);
+        // setInterval(this.loadCommentsFromServer([{"id": 27, "author": "Joe Blow", "text": "Hi mom!"}]), this.props.pollInterval);
+
+        // Prime the pump by requesting an update from server
+        socket.emit('send_data');
+        // Wait for response, then display
+        socket.on('update', function(data) {
+          // console.log(JSON.stringify(data));
+          displayComments(data);
+          });
+        },
       render: function() {
         return (
           <div className="commentBox">
