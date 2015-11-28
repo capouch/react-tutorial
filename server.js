@@ -108,15 +108,15 @@ io.sockets.on('connection', function (client) {
         };
       comments.push(newComment);
       fs.writeFile(COMMENTS_FILE, JSON.stringify(comments, null, 4), function(err) {
-        if (err) {
-          console.error(err);
-          process.exit(1);
-          }
-        // Yay!!  The watcher will take care of this automatically
-        // client.emit('update', comments);
-        });
+      if (err) {
+        console.error(err);
+        process.exit(1);
+        }
+      // Yay!!  The watcher will take care of this automatically
+      // client.emit('update', comments);
       });
     });
+  });
 
   // Keep an eye for local changes to the data file
   //   Used to handle both local edits and client-driven updates to file
