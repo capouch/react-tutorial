@@ -16,8 +16,9 @@
     <script src="/socket.io/socket.io.js"></script>
     <div id="content"></div>
     <script type="text/babel">
+
     // tutorial code
-    // Begin conversion AJAX->socket.io 28 November 2015
+    // Converted from AJAX->socket.io 28 November 2015
     var socket = io.connect(document.location.href);
     var CommentBox = React.createClass({
       loadCommentsFromServer: function(data) {
@@ -33,24 +34,23 @@
         var newComments = comments.concat([comment]);
         this.setState({data: newComments});
         // Send the data via socket.io
-        // Note no error checking yet
+        //   Note no error checking yet
         socket.emit('submission', comment);
-        // Update message ought to take care of refresh
+        // Update message will take care of necessary refresh from server
         },
       getInitialState: function() {
         return {data: []};
       },
       componentDidMount: function() {
+        // This code is auto-run by React on when the component renders
+
         // Why do I have to do this to solve scoping error?
         var displayComments = this.loadCommentsFromServer;
 
-        // Former code
-        // this.loadCommentsFromServer([{"id": 27, "author": "Joe Blow", "text": "Hi mom!"}]);
-        // setInterval(this.loadCommentsFromServer([{"id": 27, "author": "Joe Blow", "text": "Hi mom!"}]), this.props.pollInterval);
-
         // Prime the pump by requesting an update from server
         socket.emit('send_data');
-        // Wait for response, then display
+
+        // All updates (e.g. after new entry submit too!!) are processed here
         socket.on('update', function(data) {
           // console.log(JSON.stringify(data));
           displayComments(data);
