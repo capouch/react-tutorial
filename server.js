@@ -16,17 +16,22 @@ var express = require('express');
 var http = require('http');
 var bodyParser = require('body-parser');
 var app = express();
+
+// These two lines required to set up socket.io service
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 
+// Set some globals
+var port = (process.env.PORT || 3000);
 var COMMENTS_FILE = path.join(__dirname, 'comments.json');
 
-// app.set('port', (process.env.PORT || 3000));
-
+// The only HTTP transfer now will be automatic, via this route
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Note 28 November this code is no longer active
+//     data is transferred using socket.io
 app.get('/api/comments', function(req, res) {
   fs.readFile(COMMENTS_FILE, function(err, data) {
     if (err) {
@@ -38,6 +43,8 @@ app.get('/api/comments', function(req, res) {
   });
 });
 
+// Note 28 November this code is 100% inactive now
+//     due to use of socket.io
 app.post('/api/comments', function(req, res) {
   fs.readFile(COMMENTS_FILE, function(err, data) {
     if (err) {
@@ -65,8 +72,10 @@ app.post('/api/comments', function(req, res) {
   });
 });
 
+// All client-server traffic now uses socket.io, hence it's all in this handler
 io.sockets.on('connection', function (client) {
-  // Respond to requests to send data
+
+  // Respond to client request to send data
   client.on('send_data', function () {
     // console.log('Got message from client');
     fs.readFile(COMMENTS_FILE, function(err, data) {
@@ -78,6 +87,8 @@ io.sockets.on('connection', function (client) {
     client.emit('update', JSON.parse(data));
     });
   });
+
+  // Handle new data sent by client
   client.on('submission', function (entry) {
     fs.readFile(COMMENTS_FILE, function(err, data) {
       if (err) {
@@ -94,19 +105,21 @@ io.sockets.on('connection', function (client) {
         id: Date.now(),
         author: entry.author,
         text: entry.text,
-      };
+        };
       comments.push(newComment);
       fs.writeFile(COMMENTS_FILE, JSON.stringify(comments, null, 4), function(err) {
         if (err) {
           console.error(err);
           process.exit(1);
-        }
-        // Hmmm.  The watcher will take care of this automatically!!
+          }
+        // Yay!!  The watcher will take care of this automatically
         // client.emit('update', comments);
+        });
       });
     });
-  });
+
   // Keep an eye for local changes to the data file
+  //   Used to handle both local edits and client-driven updates to file
   fs.watchFile(
     'comments.json',
     function ( current, previous ) {
@@ -126,8 +139,8 @@ io.sockets.on('connection', function (client) {
   });
 });
 
-server.listen(3000);
-console.log('Server running on port 3000');
+server.listen(port);
+console.log('Server running on port ' + port);
 //(app.get('port'), function() {
 //  console.log('Server started: http://localhost:' + app.get('port') + '/');
 //});
