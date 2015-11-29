@@ -40,10 +40,21 @@ var CommentBox = React.createClass({
   render: function() {
     return (
       <div className="commentBox">
+        <TopDiv />
         <h1>Current Comments:</h1>
         <CommentList data={this.state.data} />
         <CommentForm onCommentSubmit={this.handleCommentSubmit} />
       </div>
+    );
+  }
+});
+
+// Add a gratuitous component at the top of the page
+var TopDiv = React.createClass( {
+  render: function() {
+    return (<div className="topDiv" s>
+      <h3>I am just hanging out up here above the rest</h3>
+    </div>
     );
   }
 });
@@ -128,6 +139,6 @@ var CommentForm = React.createClass({
   }
 });
 ReactDOM.render(
-  <CommentBox url="/api/comments" pollInterval={2000} />,
+  <CommentBox />,
   document.getElementById('content')
 );
