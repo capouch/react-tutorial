@@ -80,7 +80,7 @@ io.sockets.on('connection', function (client) {
   // Keep an eye for local changes to the data file
   //   Used to handle both local edits and client-driven updates to file
   fs.watchFile(
-    'comments.json',
+    COMMENTS_FILE,
     function ( current, previous ) {
       // console.log( 'file accessed' );
       // Send notice
