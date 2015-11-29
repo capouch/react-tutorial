@@ -1,7 +1,7 @@
 // tutorial code
 
 //
-// Client-side logic, using React
+// Client-side logic, using React components
 //
 
 // Converted from AJAX->socket.io 28 November 2015
