@@ -10,6 +10,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+//
+// Server side logic
+//
+
 var fs = require('fs');
 var path = require('path');
 var express = require('express');
@@ -77,7 +81,7 @@ io.sockets.on('connection', function (client) {
       }); // readFile
   }); // on submission
 
-  // Keep an eye for local changes to the data file
+  // Keep an eye on local changes to the data file
   //   Used to handle both local edits and client-driven updates to file
   fs.watchFile(
     COMMENTS_FILE,

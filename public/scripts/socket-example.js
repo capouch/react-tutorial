@@ -1,4 +1,9 @@
 // tutorial code
+
+//
+// Client-side logic, using React
+//
+
 // Converted from AJAX->socket.io 28 November 2015
 var socket = io.connect(document.location.href);
 var CommentBox = React.createClass({
