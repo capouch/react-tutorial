@@ -101,6 +101,3 @@ io.sockets.on('connection', function (client) {
 
 server.listen(port);
 console.log('Server running on port ' + port);
-//(app.get('port'), function() {
-//  console.log('Server started: http://localhost:' + app.get('port') + '/');
-//});
