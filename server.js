@@ -45,7 +45,7 @@ io.sockets.on('connection', function (client) {
     // console.log(JSON.parse(data));
     client.emit('update', JSON.parse(data));
     });
-  });
+  }); // send_data
 
   // Handle new data sent by client
   client.on('submission', function (entry) {
@@ -53,7 +53,7 @@ io.sockets.on('connection', function (client) {
       if (err) {
         console.error(err);
         process.exit(1);
-      }
+        }
       var comments = JSON.parse(data);
       // NOTE: In a real implementation, we would likely rely on a database or
       // some other approach (e.g. UUIDs) to ensure a globally unique id. We'll
@@ -67,15 +67,15 @@ io.sockets.on('connection', function (client) {
         };
       comments.push(newComment);
       fs.writeFile(COMMENTS_FILE, JSON.stringify(comments, null, 4), function(err) {
-      if (err) {
-        console.error(err);
-        process.exit(1);
-        }
-      // Yay!!  The watcher will take care of this automatically
-      // client.emit('update', comments);
-      });
-    });
-  });
+        if (err) {
+          console.error(err);
+          process.exit(1);
+          }
+          // Yay!!  The watcher below will take care of this automatically
+          // client.emit('update', comments);
+        });
+      }); // readFile
+  }); // on submission
 
   // Keep an eye for local changes to the data file
   //   Used to handle both local edits and client-driven updates to file
@@ -95,8 +95,9 @@ io.sockets.on('connection', function (client) {
         client.emit('update', JSON.parse(data));
       });
     }
-  });
-});
+  }); // watchFile
+
+}); // on connection
 
 server.listen(port);
 console.log('Server running on port ' + port);
