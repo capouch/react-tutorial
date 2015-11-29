@@ -52,8 +52,8 @@ var CommentBox = React.createClass({
 // Add a gratuitous component at the top of the page
 var TopDiv = React.createClass( {
   render: function() {
-    return (<div className="topDiv" s>
-      <h3>I am just hanging out up here above the rest</h3>
+    return (<div className="topDiv">
+      <h3>I am just a topdiv hanging out up here above the rest</h3>
     </div>
     );
   }
