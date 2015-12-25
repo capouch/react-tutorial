@@ -31,8 +31,7 @@ var CommentBox = React.createClass({
   componentDidMount: function() {
     // This code is auto-run by React on when the component renders
 
-    // Why do I have to do this to solve scoping error?
-    //   i.e. "loadCommentsFromServer" generates an error in the on function
+    // This assignment stops an apparent scoping error in .on handler below
     var displayComments = this.loadCommentsFromServer;
 
     // Prime the pump by requesting an update from server
