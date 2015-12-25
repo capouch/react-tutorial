@@ -5,6 +5,7 @@
 //
 
 // Converted from AJAX->socket.io 28 November 2015
+// Testing new atom install with Spring 2016 base box
 var socket = io.connect(document.location.href);
 var CommentBox = React.createClass({
   loadCommentsFromServer: function(data) {
